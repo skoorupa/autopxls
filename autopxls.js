@@ -235,7 +235,12 @@ function AutoPXLS(images){
 
           if(result > 0){
             //setTimeout(draw, result*1000);
-            setTimeout(draw, (window.location.hostname == 'pl.pxls.cf' || window.location.hostname == 'pxls.pety.pl') ? result*150 : result*1000);
+            setTimeout(draw, (window.location.hash && window.location.hash == 'fast') ? 50 : ((window.location.hostname == 'pl.pxls.cf' || window.location.hostname == 'pxls.pety.pl') ? result*150 : result*1000));
+            /*
+                #fast - really fast for PXLS admins
+                pl.pxls.cf or pxls.pety.pl - fast PXLS's, quicker than default timeout
+                default - default timeout
+            */
             return;
           }
           else{
