@@ -120,11 +120,48 @@ function AutoPXLS(images){
       
       return color_id;
     }
+    
+    /**
+     * Returns a random number between min (inclusive) and max (exclusive)
+     */
+    function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
+    /**
+     * Returns a random integer between min (inclusive) and max (inclusive)
+     * Using Math.round() will give you a non-uniform distribution!
+     */
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
     function tryToDraw(){
-      for(var _y = 0; _y < canvas.height; _y++){
-        for(var _x = 0; _x < canvas.width; _x++){
-          var coords = {x: _x, y: _y};
+      
+      var processedY = [];
+      var processedX = [];
+      var _y_random, _x_random;
+      
+      for (var __y = 0; _y < canvas.height; __y++) {
+      
+      
+      for (var _y = 0; _y < canvas.height; _y++) {
+        _y_random = getRandomInt(0, canvas.height);
+        while (processedY.includes(_y_random)) {
+           _y_random = getRandomInt(0, canvas.height);
+        }
+        processedY.append(_y_random);
+          
+        for (var _x = 0; _x < canvas.width; _x++) {
+          _x_random = getRandomInt(0, canvas.width);
+           while (processedX.includes(_y_random)) {
+              _x_random = getRandomInt(0, canvas.width);
+           }
+           processedX.append(_x_random);
+            
+            
+          //var coords = {x: _x, y: _y};
+          var coords = {x: _x_random, y: _y_random};
 
           if(isSamePixelColor(coords)){
             //console.log("same color, skip");
