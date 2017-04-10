@@ -229,7 +229,8 @@ function AutoPXLS(images){
           var result = painters[i].drawImage();
 
           if(result > 0){
-            setTimeout(draw, result*1000);
+            //setTimeout(draw, result*1000);
+            setTimeout(draw, (window.location.hostname == 'pl.pxls.cf' || window.location.hostname == 'pxls.pety.pl') ? result*150 : result*1000);
             return;
           }
           else{
