@@ -142,7 +142,7 @@ function AutoPXLS(images){
       var processedX = [];
       var _y_random, _x_random;
       
-      for (var __y = 0; _y < canvas.height; __y++) {
+      //for (var __y = 0; _y < canvas.height; __y++) {
       
       
       for (var _y = 0; _y < canvas.height; _y++) {
