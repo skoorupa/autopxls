@@ -143,22 +143,27 @@ function AutoPXLS(images){
       var _y_random, _x_random;
       
       //for (var __y = 0; _y < canvas.height; __y++) {
-      
+      var _y_arr = Array.apply(null, {length: canvas.height}).map(Number.call, Number), _x_arr_random;
+      var _y_arr_random = shuffle(_y_arr);
+      var _x_arr = Array.apply(null, {length: canvas.width}).map(Number.call, Number);
+      var _x_arr_random = shuffle(_x_arr);
       
       for (var _y = 0; _y < canvas.height; _y++) {
-        _y_random = getRandomInt(0, canvas.height);
+      //for (var _y = 0; _y < canvas.height; _y++) {
+        /*_y_random = getRandomInt(0, canvas.height);
         while (processedY.includes(_y_random)) {
            _y_random = getRandomInt(0, canvas.height);
         }
-        processedY.push(_y_random);
+        processedY.push(_y_random);*/
+        _y_random = _y_arr_random[_y];
           
         for (var _x = 0; _x < canvas.width; _x++) {
-          _x_random = getRandomInt(0, canvas.width);
+          /*_x_random = getRandomInt(0, canvas.width);
            while (processedX.includes(_y_random)) {
               _x_random = getRandomInt(0, canvas.width);
            }
-           processedX.push(_x_random);
-            
+           processedX.push(_x_random);*/
+          _x_random = _x_arr_random[_x];
             
           //var coords = {x: _x, y: _y};
           var coords = {x: _x_random, y: _y_random};
