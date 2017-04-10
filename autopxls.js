@@ -150,14 +150,14 @@ function AutoPXLS(images){
         while (processedY.includes(_y_random)) {
            _y_random = getRandomInt(0, canvas.height);
         }
-        processedY.append(_y_random);
+        processedY.push(_y_random);
           
         for (var _x = 0; _x < canvas.width; _x++) {
           _x_random = getRandomInt(0, canvas.width);
            while (processedX.includes(_y_random)) {
               _x_random = getRandomInt(0, canvas.width);
            }
-           processedX.append(_x_random);
+           processedX.push(_x_random);
             
             
           //var coords = {x: _x, y: _y};
