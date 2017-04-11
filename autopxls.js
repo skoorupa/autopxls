@@ -1,5 +1,5 @@
 console.log('AutoPXLS mod by p0358, randomized pixel placement + wrong color autoadjust + stats, https://github.com/p0358/autopxls');
-document.autoPxlsScriptRevision = 2;
+document.autoPxlsScriptRevision = 3;
 if (!document.autoPxlsRandomNumber) document.autoPxlsRandomNumber = Math.round(Math.random() * 10000000);
 //console.log('Script revision: 1, initializing...');
 
