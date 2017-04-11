@@ -10,6 +10,8 @@ Append the option text into URL after the `#`, script checks if it contains the 
 
 >**notimer** - disables timer output to console
 
+>**timerlite** - makes timer output the same text into console, so that it will be wrapped to one line with counter on the left in some browsers
+
 >**classic** - don't pick random pixel on screen, go line-by-line like the original script
 
 >**fast** - force lower colors check delay = faster drawing, for PXLS with no delay
