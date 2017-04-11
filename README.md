@@ -8,6 +8,8 @@ Append the option text into URL after the `#`, script checks if it contains the 
 
 >**noautocolor** - disables selecting the closest color on palette if it comes across incorrect one, will just report that in chat and skip like original script if this option is enabled
 
+>**notimer** - disables timer output to console
+
 >**classic** - don't pick random pixel on screen, go line-by-line like the original script
 
 >**fast** - force lower colors check delay = faster drawing, for PXLS with no delay
