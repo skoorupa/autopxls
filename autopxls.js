@@ -76,6 +76,10 @@ function AutoPXLS(images){
 
     var image_loaded_flag = false;
     var hasStartedDrawing = false;
+    
+    var pixels_complete = 0;
+    var pixels_incomplete = 0;
+    var completionPercentage = 0;
 
     var colors = [
         [255,255,255],
@@ -94,6 +98,24 @@ function AutoPXLS(images){
         [0,0,234],
         [207,110,228],
         [130,0,128]
+      ];
+      
+      var colornames = [
+        'white',
+        'lightgray',
+        'gray',
+        'black',
+        'pink',
+        'red',
+        'orange',
+        'brown',
+        'yellow',
+        'lightgreen',
+        'green',
+        'aqua',
+        'darkblue',
+        'pink',
+        'magenta'
       ];
 
     function isSamePixelColor(coords){
@@ -210,7 +232,12 @@ function AutoPXLS(images){
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    function tryToDraw(){
+    function tryToDraw(scanmode){
+        
+      pixels_complete = 0;
+      pixels_incomplete = 0;
+      
+      var no_more_drawing = false;
       
       var processedY = [];
       var processedX = [];
@@ -240,7 +267,7 @@ function AutoPXLS(images){
           _x_random = _x_arr_random[_x];
             
           //var coords = {x: _x, y: _y};
-          if (!isOptionProvided('classic')) { // yes, it still does the shuffle = it's slower, but I expect most people want the new behaviour
+          if (!isOptionProvided('classic') && !scanmode) { // yes, it still does the shuffle = it's slower, but I expect most people want the new behaviour
               var coords = {x: _x_random, y: _y_random};
           } else {
               var coords = {x: _x, y: _y};
@@ -248,19 +275,33 @@ function AutoPXLS(images){
 
           if(isSamePixelColor(coords)){
             //console.log("same color, skip");
+            pixels_complete += 1;
           }
           else{
+              
+            pixels_incomplete += 1;
 
-            var color_id = getColorId(coords);
-            if(color_id < 0) continue;
+            if (!scanmode && !no_more_drawing) {
+                var color_id = getColorId(coords);
+                if(color_id < 0) continue;
 
-            console.log("drawing " + title + " coords " + " x:" + (parseInt(x) + parseInt(coords["x"])) + " y:" + (parseInt(y) + parseInt(coords["y"])));
+                console.log("drawing " + title + " coords " + " x:" + (parseInt(x) + parseInt(coords["x"])) + " y:" + (parseInt(y) + parseInt(coords["y"])) + " (" + colornames[color_id] + ")");
 
-            App.switchColor(color_id);
-            App.attemptPlace ( (parseInt(x) + parseInt(coords["x"])), (parseInt(y) + parseInt(coords["y"])) );
-            return 20;
+                App.switchColor(color_id);
+                App.attemptPlace ( (parseInt(x) + parseInt(coords["x"])), (parseInt(y) + parseInt(coords["y"])) );
+                //return 20;
+                no_more_drawing = true;
+            }
+                
+            
+            
           }
         }
+      }
+      if (no_more_drawing) return 20;
+      completionPercentage = Math.round( (  pixels_complete / (pixels_incomplete + pixels_complete)  ) *100 )
+      if (scanmode) {
+          return completionPercentage;
       }
       console.log(title + " is correct");
       return -1;
@@ -268,7 +309,7 @@ function AutoPXLS(images){
 
     function drawImage(){
       if(image_loaded_flag){
-        return tryToDraw();
+        return tryToDraw(false);
       }
       return -1;
     }
@@ -295,7 +336,8 @@ function AutoPXLS(images){
       title: title,
       x: x,
       y: y,
-      imgsrc: imgsrc
+      imgsrc: imgsrc,
+      tryToDraw: tryToDraw
     }
   };
 
@@ -370,7 +412,10 @@ function AutoPXLS(images){
           
           if (!document.autoPxlsRandomNumber) document.autoPxlsRandomNumber = Math.round(Math.random() * 10000000);
           
-          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null, randomNumber: document.autoPxlsRandomNumber }) // TESTING
+          var completionPercentage = painters[i].tryToDraw(true);
+          //console.log(painters[i].title + ' completion percentage: ' + completionPercentage + '%');
+          
+          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null, randomNumber: document.autoPxlsRandomNumber, completionPercentage: completionPercentage }) // TESTING
               .done(function( data ) {
                 //alert( "Data Loaded: " + data );
                 if (data.timeout) reportStatsTimeout = parseInt(data.timeout);
@@ -395,6 +440,6 @@ function AutoPXLS(images){
   if (isOptionProvided('nostats')) {
       console.log('DISABLING stats reporting due to \'nostats\' option!');
   } else {
-      setTimeout(reportStats, 2000);
+      setTimeout(reportStats, 5000);
   }
 }
