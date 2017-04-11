@@ -357,7 +357,7 @@ function AutoPXLS(images){
     var timer = (App.cooldown-(new Date).getTime())/1E3;
     if(0<timer){
       if (!isOptionProvided('notimer')) {
-          if (isOptionProvided('timerlite') {
+          if (isOptionProvided('timerlite')) {
               console.log("timer: waiting...");
           } else {
               console.log("timer: " + timer);
