@@ -5,7 +5,7 @@ if (!document.autoPxlsRandomNumber) document.autoPxlsRandomNumber = Math.round(M
 
 if (window.location.hostname == 'pxls.space') {
     if (!$("div.info").find("#autopxlsinfo").length) {
-        $("div.info").append('<div id="autopxlsinfo"><h1>AutoPXLS <a href="//github.com/p0358/autopxls">mod</a> by p0358</h1><p id="infoText"> </p></div>');
+        $("div.info").append('<div id="autopxlsinfo"><h1>AutoPXLS <a href="//github.com/p0358/autopxls">mod</a>' + /* by p0358*/'</h1><p id="infoText"> </p></div>');
     }
 }
 
