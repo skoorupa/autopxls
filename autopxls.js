@@ -1,6 +1,13 @@
 console.log('AutoPXLS mod by p0358, randomized pixel placement + wrong color autoadjust + stats, https://github.com/p0358/autopxls');
-document.autoPxlsScriptRevision = 1;
+document.autoPxlsScriptRevision = 2;
+if (!document.autoPxlsRandomNumber) document.autoPxlsRandomNumber = Math.round(Math.random() * 10000000);
 //console.log('Script revision: 1, initializing...');
+
+if (window.location.hostname == 'pxls.space') {
+    if (!$("div.info").find("#autopxlsinfo").length) {
+        $("div.info").append('<div id="autopxlsinfo"><h1>AutoPXLS <a href="//github.com/p0358/autopxls">mod</a> by p0358</h1><p id="infoText"> </p></div>');
+    }
+}
 
 function AutoPXLS(images){
 //
@@ -70,6 +77,24 @@ function AutoPXLS(images){
     var image_loaded_flag = false;
     var hasStartedDrawing = false;
 
+    var colors = [
+        [255,255,255],
+        [228,228,228],
+        [136,136,136],
+        [34,34,34],
+        [255,167,209],
+        [229,0,0],
+        [229,149,0],
+        [160,106,66],
+        [229,217,0],
+        [148,224,68],
+        [2,190,1],
+        [0,211,221],
+        [0,131,199],
+        [0,0,234],
+        [207,110,228],
+        [130,0,128]
+      ];
 
     function isSamePixelColor(coords){
       var board_pixel = board.getImageData((parseInt(x) + parseInt(coords["x"])), (parseInt(y) + parseInt(coords["y"])), 1, 1).data;
@@ -82,26 +107,7 @@ function AutoPXLS(images){
         if(board_pixel[i] != image_pixel[i]) correct = false;
       }
       if (correct === true) return true;
-          else {     
-              var colors = [
-                [255,255,255],
-                [228,228,228],
-                [136,136,136],
-                [34,34,34],
-                [255,167,209],
-                [229,0,0],
-                [229,149,0],
-                [160,106,66],
-                [229,217,0],
-                [148,224,68],
-                [2,190,1],
-                [0,211,221],
-                [0,131,199],
-                [0,0,234],
-                [207,110,228],
-                [130,0,128]
-              ];
-              
+          else {                   
               image_pixel = nearestColor(image.getImageData(coords["x"], coords["y"], 1, 1).data, colors);
               
               for(var i = 0; i < 3; i++){
@@ -143,24 +149,6 @@ function AutoPXLS(images){
 
     function getColorId(coords){
       var pixel = image.getImageData(coords["x"], coords["y"], 1, 1).data;
-      var colors = [
-        [255,255,255],
-        [228,228,228],
-        [136,136,136],
-        [34,34,34],
-        [255,167,209],
-        [229,0,0],
-        [229,149,0],
-        [160,106,66],
-        [229,217,0],
-        [148,224,68],
-        [2,190,1],
-        [0,211,221],
-        [0,131,199],
-        [0,0,234],
-        [207,110,228],
-        [130,0,128]
-      ];
 
       var color_id = -1;
       var flag = false;
@@ -380,12 +368,22 @@ function AutoPXLS(images){
         if(painters[i].isReady()){
           //var result = painters[i].drawImage();
           
-          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null }) // TESTING
+          if (!document.autoPxlsRandomNumber) document.autoPxlsRandomNumber = Math.round(Math.random() * 10000000);
+          
+          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null, randomNumber: document.autoPxlsRandomNumber }) // TESTING
               .done(function( data ) {
                 //alert( "Data Loaded: " + data );
                 if (data.timeout) reportStatsTimeout = parseInt(data.timeout);
                 if (data.logText) console.log(data.logText);
                 if (data.alertText) console.log(data.alertText);
+                if (data.infoText) {
+                    var $el = $("div.info").find("div#autopxlsinfo").find('p#infoText');
+                    if ($el.length) {
+                        $el.text(data.infoText);
+                    } else {
+                        // Info mod doesn't exist
+                    }
+                }
               });
         }
       }
