@@ -339,7 +339,7 @@ function AutoPXLS(images){
             } else switch (window.location.hostname) { // pl.pxls.cf or pxls.pety.pl - fast PXLS's, quicker than default timeout
                 case 'pl.pxls.cf':
                 case 'pxls.pety.pl':
-                    timeout = result*150;
+                    timeout = result*100;
                     break;
             }
             setTimeout(draw, timeout);
