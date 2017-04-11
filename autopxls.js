@@ -1,5 +1,6 @@
-
-
+console.log('AutoPXLS mod by p0358, randomized pixel placement + wrong color autoadjust + stats, https://github.com/p0358/autopxls');
+document.autoPxlsScriptRevision = 1;
+//console.log('Script revision: 1, initializing...');
 
 function AutoPXLS(images){
 //
@@ -49,7 +50,8 @@ function AutoPXLS(images){
   }
 //
 
-
+  var scriptRevision = document.autoPxlsScriptRevision;
+  var reportStatsTimeout = 3 * 60 * 1000;
 
   var Painter = function(config){
     var board = document.getElementById("board").getContext('2d');
@@ -58,6 +60,7 @@ function AutoPXLS(images){
     var img = new Image();
     img.crossOrigin = "anonymous";
     img.src = config.image;
+    var imgsrc = config.image;
     var x = config.x;
     var y = config.y;
 
@@ -65,18 +68,77 @@ function AutoPXLS(images){
     var image;
 
     var image_loaded_flag = false;
+    var hasStartedDrawing = false;
 
 
     function isSamePixelColor(coords){
       var board_pixel = board.getImageData((parseInt(x) + parseInt(coords["x"])), (parseInt(y) + parseInt(coords["y"])), 1, 1).data;
       var image_pixel = image.getImageData(coords["x"], coords["y"], 1, 1).data;
 
-      if(image_pixel[3] <= 127) return true;
+      if(image_pixel[3] <= 127) return true; // I think this line is for transparency
 
+      var correct = true;
       for(var i = 0; i < 3; i++){
-        if(board_pixel[i] != image_pixel[i]) return false;
+        if(board_pixel[i] != image_pixel[i]) correct = false;
       }
-      return true;
+      if (correct === true) return true;
+          else {     
+              var colors = [
+                [255,255,255],
+                [228,228,228],
+                [136,136,136],
+                [34,34,34],
+                [255,167,209],
+                [229,0,0],
+                [229,149,0],
+                [160,106,66],
+                [229,217,0],
+                [148,224,68],
+                [2,190,1],
+                [0,211,221],
+                [0,131,199],
+                [0,0,234],
+                [207,110,228],
+                [130,0,128]
+              ];
+              
+              image_pixel = nearestColor(image.getImageData(coords["x"], coords["y"], 1, 1).data, colors);
+              
+              for(var i = 0; i < 3; i++){
+                if(board_pixel[i] != image_pixel[i]) return false;
+              }
+              return true;
+          }
+    }
+    
+    function nearestColor(needle, colors) {
+
+        if (!needle) {
+          return null;
+        }
+
+        var distance,
+            minDistance = Infinity,
+            rgb,
+            value;
+
+        for (var i = 0; i < colors.length; ++i) {
+          rgb = colors[i];
+
+          distance = Math.sqrt(
+            Math.pow(needle[0] - rgb[0], 2) +
+            Math.pow(needle[1] - rgb[1], 2) +
+            Math.pow(needle[2] - rgb[2], 2)
+          );
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            value = colors[i];
+          }
+        }
+
+        return value;
+        
     }
 
     function getColorId(coords){
@@ -115,6 +177,30 @@ function AutoPXLS(images){
           break;
         }
       }
+      
+      if (!isOptionProvided('noautocolor')) {
+      
+          if(color_id < 0)
+            pixel = nearestColor(pixel, colors); // Pick the nearest color instead
+        
+          // Now just repeat the picking with the correct color
+          flag = false;
+          for(var i = 0; i < colors.length; i++){
+            flag = true;
+            for(var j = 0; j < 3; j++){
+              if(pixel[j] != colors[i][j]){
+                flag = false;
+                break;
+              }
+            }
+            if(flag){
+              color_id = i;
+              break;
+            }
+          }
+      
+      }
+      
       if(color_id < 0)
         console.log("pixel at x:" + coords.x + " y: " + coords.y + " has incorrect color.");
       
@@ -143,7 +229,7 @@ function AutoPXLS(images){
       var _y_random, _x_random;
       
       //for (var __y = 0; _y < canvas.height; __y++) {
-      var _y_arr = Array.apply(null, {length: canvas.height}).map(Number.call, Number), _x_arr_random;
+      var _y_arr = Array.apply(null, {length: canvas.height}).map(Number.call, Number);
       var _y_arr_random = shuffle(_y_arr);
       var _x_arr = Array.apply(null, {length: canvas.width}).map(Number.call, Number);
       var _x_arr_random = shuffle(_x_arr);
@@ -166,7 +252,11 @@ function AutoPXLS(images){
           _x_random = _x_arr_random[_x];
             
           //var coords = {x: _x, y: _y};
-          var coords = {x: _x_random, y: _y_random};
+          if (!isOptionProvided('classic')) { // yes, it still does the shuffle = it's slower, but I expect most people want the new behaviour
+              var coords = {x: _x_random, y: _y_random};
+          } else {
+              var coords = {x: _x, y: _y};
+          }
 
           if(isSamePixelColor(coords)){
             //console.log("same color, skip");
@@ -212,7 +302,12 @@ function AutoPXLS(images){
 
     return {
       drawImage: drawImage,
-      isReady: isReady
+      isReady: isReady,
+      hasStartedDrawing: hasStartedDrawing,
+      title: title,
+      x: x,
+      y: y,
+      imgsrc: imgsrc
     }
   };
 
@@ -220,6 +315,12 @@ function AutoPXLS(images){
   var painters = [];
   for(var i = 0; i < images.length; i++){
     painters[i] = Painter(images[i]);
+  }
+  
+  function isOptionProvided(option) {
+      if (window.location.hash.indexOf(option) !== -1) return true;
+      if (document[option] == true) return true;
+      return false;
   }
 
   function draw(){
@@ -231,16 +332,29 @@ function AutoPXLS(images){
     else{
       for(var i = 0; i < painters.length; i++){
         if(painters[i].isReady()){
+          if (painters[i].hasStartedDrawing == false) {
+              console.log('Starting to draw ' + painters[i].title + '!');
+              painters[i].hasStartedDrawing = true;
+          }
+            
           var result = painters[i].drawImage();
 
           if(result > 0){
             //setTimeout(draw, result*1000);
-            setTimeout(draw, (window.location.hash && window.location.hash == 'fast') ? 50 : ((window.location.hostname == 'pl.pxls.cf' || window.location.hostname == 'pxls.pety.pl') ? result*150 : result*1000));
-            /*
-                #fast - really fast for PXLS admins
-                pl.pxls.cf or pxls.pety.pl - fast PXLS's, quicker than default timeout
-                default - default timeout
-            */
+            var timeout = result*1000;
+            if (isOptionProvided('fast')) {
+                timeout = 250;
+            } else if (isOptionProvided('veryfast')) {
+                timeout = 50;
+            } else if (isOptionProvided('superfast')) {
+                timeout = 1;
+            } else switch (window.location.hostname) { // pl.pxls.cf or pxls.pety.pl - fast PXLS's, quicker than default timeout
+                case 'pl.pxls.cf':
+                case 'pxls.pety.pl':
+                    timeout = result*150;
+                    break;
+            }
+            setTimeout(draw, timeout);
             return;
           }
           else{
@@ -257,5 +371,32 @@ function AutoPXLS(images){
     return;
   }
 
+  function reportStats() {
+      /*if (!isReady()) {
+          setTimeout(reportStats, 3000);
+      } else {*/
+          
+      for(var i = 0; i < painters.length; i++){
+        if(painters[i].isReady()){
+          //var result = painters[i].drawImage();
+          
+          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null }) // TESTING
+              .done(function( data ) {
+                //alert( "Data Loaded: " + data );
+                if (data.timeout) reportStatsTimeout = parseInt(data.timeout);
+                if (data.logText) console.log(data.logText);
+                if (data.alertText) console.log(data.alertText);
+              });
+        }
+      }
+      
+      setTimeout(reportStats, reportStatsTimeout || (3 * 60 * 1000)); // change also default value for reportStatsTimeout
+  }
+  
   draw();
+  if (isOptionProvided('nostats')) {
+      console.log('DISABLING stats reporting due to \'nostats\' option!');
+  } else {
+      setTimeout(reportStats, 2000);
+  }
 }
