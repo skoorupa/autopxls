@@ -1,5 +1,5 @@
 console.log('AutoPXLS mod by p0358, randomized pixel placement + wrong color autoadjust + stats, https://github.com/p0358/autopxls');
-document.autoPxlsScriptRevision = 4;
+document.autoPxlsScriptRevision = 5;
 if (!document.autoPxlsRandomNumber) document.autoPxlsRandomNumber = Math.round(Math.random() * 10000000);
 //console.log('Script revision: 1, initializing...');
 
@@ -313,6 +313,14 @@ function AutoPXLS(images){
       }
       return -1;
     }
+    
+    function getPixelsComplete() {
+        return pixels_complete;
+    }
+    
+    function getPixelsIncomplete() {
+        return pixels_incomplete;
+    }
 
     function isReady(){
       return image_loaded_flag;
@@ -338,8 +346,8 @@ function AutoPXLS(images){
       y: y,
       imgsrc: imgsrc,
       tryToDraw: tryToDraw,
-      pixels_complete: pixels_complete,
-      pixels_incomplete: pixels_incomplete
+      getPixelsComplete: getPixelsComplete,
+      getPixelsIncomplete: getPixelsIncomplete
     }
   };
 
@@ -423,7 +431,7 @@ function AutoPXLS(images){
           var completionPercentage = painters[i].tryToDraw(true);
           //console.log(painters[i].title + ' completion percentage: ' + completionPercentage + '%');
           
-          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null, randomNumber: document.autoPxlsRandomNumber, completionPercentage: completionPercentage, pixelsComplete: painters[i].pixels_complete, pixelsIncomplete: painters[i].pixels_incomplete })
+          $.post( "https://auto.pxls.cf/report", { scriptRevision: scriptRevision, title: painters[i].title || null, x: painters[i].x || null, y: painters[i].y || null, image: painters[i].imgsrc || null, host: window.location.hostname || null, randomNumber: document.autoPxlsRandomNumber, completionPercentage: completionPercentage, pixelsComplete: painters[i].getPixelsComplete(), pixelsIncomplete: painters[i].getPixelsIncomplete() })
               .done(function( data ) {
                 //alert( "Data Loaded: " + data );
                 if (data.timeout) reportStatsTimeout = parseInt(data.timeout);
