@@ -51,7 +51,7 @@ function AutoPXLS(images){
           body: "Hey there! Enter the captcha!",
         });
       }
-      document.getElementsByTagName('title')[0].innerHTML = "[captcha!] " + document.location.hostname;
+      document.title = "[captcha!] " + document.location.hostname;
     }
 
     om(message);
