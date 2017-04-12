@@ -47,7 +47,7 @@ function AutoPXLS(images){
       if (Notification.permission !== "granted")
         Notification.requestPermission();
       else {
-        var notification = new Notification('Notification title', {
+        var notification = new Notification('autopxls', {
           body: "Hey there! Enter the captcha!",
         });
       }
