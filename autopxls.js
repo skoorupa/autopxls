@@ -50,7 +50,6 @@ function AutoPXLS(images){
         var notification = new Notification('autopxls', {
           body: "Hey there! Enter the captcha!",
         });
-        document.getElementsByTagName('title')[0].innerHTML = "pxls.space [captcha!]";
       }
       document.getElementsByTagName('title')[0].innerHTML = "[captcha!] " + document.location.hostname;
     }
