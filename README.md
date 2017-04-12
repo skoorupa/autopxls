@@ -1,5 +1,5 @@
 # AutoPXLS - mod
-This fork version is selecting random random pixel instead of first available one on left-to-right up-to-down basis like the original does. That way you see the shape of your project faster and script is harder to block, especially if ran by more people. Additional options include autoadjusting wrong colors to the ones in palette and online stats (you can see how many people are drawing with you and estimated completion time).
+This fork version is selecting random pixel instead of first available one on left-to-right up-to-down basis like the original does. That way you see the shape of your project faster and script is harder to block, especially if ran by more people. Additional options include autoadjusting wrong colors to the ones in palette and online stats (you can see how many people are drawing with you and estimated completion time).
 ## Options
 You can tweak the script's behaviour using options. Append the option text into URL after the `#`, script checks if it contains the string. Alternatively you can set options like `document.optionname = true;`. They can be applied at any time while the script is running. List of available options:
 
