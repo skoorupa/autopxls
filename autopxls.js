@@ -43,7 +43,7 @@ function AutoPXLS(images){
   App.socket.onmessage = function(message){
     var m = JSON.parse(message.data);
 
-    if(m.type == "captcha_required"){
+    if (m.type == "captcha_required") {
       if (Notification.permission !== "granted")
         Notification.requestPermission();
       else {
@@ -52,6 +52,7 @@ function AutoPXLS(images){
         });
         document.getElementsByTagName('title')[0].innerHTML = "pxls.space [captcha!]";
       }
+      document.getElementsByTagName('title')[0].innerHTML = "[captcha!] " + document.location.hostname;
     }
 
     om(message);
@@ -268,7 +269,7 @@ function AutoPXLS(images){
           _x_random = _x_arr_random[_x];
             
           //var coords = {x: _x, y: _y};
-          if (!isOptionProvided('classic') && !scanmode) { // yes, it still does the shuffle = it's slower, but I expect most people want the new behaviour
+          if (!isOptionProvided('classic') && !scanmode) { // yes, it still does the shuffle with classic option = it's slower, but I expect most people want the new behaviour
               var coords = {x: _x_random, y: _y_random};
           } else {
               var coords = {x: _x, y: _y};
@@ -299,11 +300,12 @@ function AutoPXLS(images){
           }
         }
       }
+      completionPercentage = Math.round( (  pixels_complete / (pixels_incomplete + pixels_complete)  ) *100 );
       if (no_more_drawing) return 20;
-      completionPercentage = Math.round( (  pixels_complete / (pixels_incomplete + pixels_complete)  ) *100 )
       if (scanmode) {
           return completionPercentage;
       }
+
       console.log(title + " is correct");
       return -1;
     }
