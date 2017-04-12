@@ -1,5 +1,5 @@
 // ============================================= configure and run ============
-function autopxls_loader(){
+function autopxls_loader() {
   var images = [
     {
       title: "TARDIS",
@@ -28,7 +28,7 @@ function autopxls_loader(){
   ]
 
   var autopxls_script = document.createElement('script');
-  autopxls_script.src = "https://rawgit.com/dd7531/autopxls/master/autopxls.js";
+  autopxls_script.src = "https://rawgit.com/p0358/autopxls/master/autopxls.js";
   autopxls_script.onload = function () {
     AutoPXLS(images);
   };
