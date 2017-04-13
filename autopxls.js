@@ -115,8 +115,8 @@ function AutoPXLS(images){
         'green',
         'aqua',
         'darkblue',
-        'pink',
-        'magenta'
+        'magenta',
+        'purple'
       ];
 
     function isSamePixelColor(coords){
